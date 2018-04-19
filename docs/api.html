@@ -11,23 +11,68 @@
 {
   "title": "api",
   "viewMode": "presentation",
-  "lastExport": "2018-04-18T16:19:01.332Z"
+  "savedEnvironment": {
+    "x": [
+      "object",
+      "NobwRAhmBcCMAMj4BowCMYCYnwL7PCjngBYBmVDaTATjPNwF0g=="
+    ],
+    "y": [
+      "string",
+      "JYewJsYKZA=="
+    ]
+  },
+  "lastExport": "2018-04-19T23:02:58.405Z"
 }
 
 %% md
 # API
 
-__TODO__ - fill this out.
+
 
 %% md
 ### `iodide.environment`
 
+Functions for saving the state of variables and exporting data with your notebook.
+
 
 %% md
-### `iodide.resolve`
+#### __`iodide.environment.freeze(obj)`__ 
+
+serializes as JSON then compresses the state of an object. `obj` will freeze the value under the namespace of the key. Once the notebook is exported, the state will be added to the embedded JSMD in the html document.
+
+```javascript
+var x = [{a: 10000, b: 20000}, {a: 1043, b: 29343}]
+var y = 'iodide'
+iodide.environment.freeze({x, y})
+```
+
+%% js
+var x = [{a: 10000, b: 20000}, {a: 1043, b: 29343}]
+var y = 'iodide'
+iodide.environment.freeze({x, y})
 
 %% md
-### `iodide.expectResolution`
+#### __`iodide.environment.freezeRawString`__
+
+Same as `iodide.environment.freeze`, but will not compress the value.
+
+
+%% md
+__`iodide.environment.get(key)`__
+
+Retrieves the serialized data.
+
+%% js
+// in our current environment, x is a frozen variable. Let's get it.
+
+var xData = iodide.environment.get('x')
+xData
+
+%% md
+__`iodide.environment.list`__
+
+%% md
+__`iodide.environment.clear`__
 
 %% md
 ### `iodide.addOutputHandler`
