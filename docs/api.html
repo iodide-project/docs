@@ -11,7 +11,7 @@
 {
   "title": "api",
   "viewMode": "presentation",
-  "lastExport": "2018-04-26T21:25:18.209Z"
+  "lastExport": "2018-04-26T21:41:57.898Z"
 }
 
 %% css
@@ -119,14 +119,71 @@ By way of an example, this code block will await the resolution of a Promise bef
 
 ```javascript
 iodide.evalQueue.requireExplicitContinuation()
+var url = 'https://gist.githubusercontent.com/hamilton/67d7904af5cd696ec2b12450b69bd657/raw/15d83f7f281c3e5de2ca3359529ef041b47fcbf6/css'
 
-fetch('https://example.com/data.json')
-    .then(r => r.text())
-    .then(data => parseThis(data)) // parseThis is some other function defined elsewhere
-    .then(() => { 
-    	iodide.evalQueue.continue()
+fetch(url).then(d=>d.text())
+  .then(data=>{
+ 	 return data.split('\n').map(d=>d.split(","))
+  })
+  .then(data=>{
+    let header = data[0]
+    let body = data.slice(1)
+    return body.map(di=>{
+      let out = {}
+      header.forEach((h,i)=>{
+        out[h] = di[i]
+      })
+      return out
     })
+  })
+  .then(data=>{
+  // format data a bit more nicely!
+  iodide.evalQueue.continue()
+  	return data.map(d=>{
+      d.neighborhood = d.nbrhd
+      delete d.nbrhd
+      d.evictionNotices = d.count
+      delete d.count
+      d.date = new Date(d.date)
+      return d
+    })
+})
 ```
+
+
+%% js
+iodide.evalQueue.requireExplicitContinuation()
+var url = 'https://gist.githubusercontent.com/hamilton/67d7904af5cd696ec2b12450b69bd657/raw/15d83f7f281c3e5de2ca3359529ef041b47fcbf6/css'
+
+fetch(url).then(d=>d.text())
+  .then(data=>{
+ 	 return data.split('\n').map(d=>d.split(","))
+  })
+  .then(data=>{
+    let header = data[0]
+    let body = data.slice(1)
+    return body.map(di=>{
+      let out = {}
+      header.forEach((h,i)=>{
+        out[h] = di[i]
+      })
+      return out
+    })
+  })
+  .then(data=>{
+  // format data a bit more nicely!
+  iodide.evalQueue.continue()
+  	return data.map(d=>{
+      d.neighborhood = d.nbrhd
+      delete d.nbrhd
+      d.evictionNotices = d.count
+      delete d.count
+      d.date = new Date(d.date)
+      return d
+    })
+})
+
+%% md
 
 Here is another example to further clarify, using a Promise directly.
 
