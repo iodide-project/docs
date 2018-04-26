@@ -11,34 +11,30 @@
 {
   "title": "api",
   "viewMode": "presentation",
-  "savedEnvironment": {
-    "x": [
-      "object",
-      "NobwRAhmBcCMAMj4BowCMYCYnwL7PCjngBYBmVDaTATjPNwF0g=="
-    ],
-    "y": [
-      "string",
-      "JYewJsYKZA=="
-    ]
-  },
-  "lastExport": "2018-04-19T23:02:58.405Z"
+  "lastExport": "2018-04-26T21:25:18.209Z"
+}
+
+%% css
+.user-markdown h3 {
+  padding-top:50px !important;
+}
+
+.user-markdown h4 {
+  padding-top:30px !important;
 }
 
 %% md
 # API
-
-
 
 %% md
 ### `iodide.environment`
 
 Functions for saving the state of variables and exporting data with your notebook.
 
-
 %% md
 #### __`iodide.environment.freeze(obj)`__ 
 
-serializes as JSON then compresses the state of an object. `obj` will freeze the value under the namespace of the key. Once the notebook is exported, the state will be added to the embedded JSMD in the html document.
+serializes as JSON then compresses the state of an object. `obj` will freeze the value under the namespace of the key. Once the notebook is exported, the state will be added to the embedded JSMD in the html document. Freezing is _additive_ - every call to `iodide.environment.freeze` will either update or add a new bit of state, but will not overwrite key-value pairs not explicitly updated.
 
 ```javascript
 var x = [{a: 10000, b: 20000}, {a: 1043, b: 29343}]
@@ -56,11 +52,14 @@ iodide.environment.freeze({x, y})
 
 Same as `iodide.environment.freeze`, but will not compress the value.
 
-
 %% md
-__`iodide.environment.get(key)`__
+#### `iodide.environment.get(key)`
 
 Retrieves the serialized data.
+
+```javascript
+let xData = iodide.environment.get('x')
+```
 
 %% js
 // in our current environment, x is a frozen variable. Let's get it.
@@ -69,13 +68,113 @@ var xData = iodide.environment.get('x')
 xData
 
 %% md
-__`iodide.environment.list`__
+#### `iodide.environment.list`
+
+Returns an array keys associated with frozen variables.
+
+```
+var x = [{a: 10000, b: 20000}, {a: 1043, b: 29343}]
+var y = 'iodide'
+iodide.environment.freeze({x, y})
+
+iodide.environment.list()
+> ['x', 'y']
+```
+
+%% js
+iodide.environment.list()
 
 %% md
-__`iodide.environment.clear`__
+#### `iodide.environment.clear`
+
+Removes all frozen variables from the environment.
+
+```javascript
+iodide.environment.clear()
+iodide.environment.list()
+> []
+```
+
+%% js
+iodide.environment.clear()
+iodide.environment.list()
 
 %% md
-### `iodide.addOutputHandler`
+### `iodide.evalQueue`
+
+Functions for pausing and resuming the cell evaluation queue. Useful for awaiting the end of an asynchronous call or process of some sort before continuing onto the next cell.
+
+%% md
+#### `iodide.evalQueue.requireExplicitContinuation()`
+
+This function explicitly sets a flag to delay any further cell evaluation until the user has encountered `iodide.evalQueue.continue()`.
+
+It is vital that when using `iodide.evalQueue` functions that you properly build in error catching.
+
+#### `iodide.evalQueue.continue()`
+
+This function sets a flag to move on to the next cell execution after the block in which it is executed has completed.
+
+By way of an example, this code block will await the resolution of a Promise before moving to the next cell.
+
+```javascript
+iodide.evalQueue.requireExplicitContinuation()
+
+fetch('https://example.com/data.json')
+    .then(r => r.text())
+    .then(data => parseThis(data)) // parseThis is some other function defined elsewhere
+    .then(() => { 
+    	iodide.evalQueue.continue()
+    })
+```
+
+Here is another example to further clarify, using a Promise directly.
+
+```javascript
+iodide.evalQueue.requireExplicitContinuation()
+
+let dataSet = new Promise((resolve, reject) => {
+    let counter = 0
+    let timer = setInterval(() => {
+        counter += 1
+        if (counter > 10) {
+            iodide.evalQueue.continue()
+            resolve('finished!') // resolve the promise
+            clearInterval(timer)
+        }
+    }, 300)
+})
+
+```
+
+%% md
+### `iodide.addOutputHandler(handler)`
+
+Adds a custom output handler to Iodide. 
+
+An output handler is an object or function that has two functions: `shouldHandle` and `render`. `shouldHandle` is a function that takes a value, inspects it in some way, and then returns `true` if this handler should handle it, and `false` otherwise. `iodide.addOutputHandler` takes the handler and adds it to the chain of handlers checked whenever a user outputs a return value in a cell.
+
+By way of example, this handler will inspect a value for `lat` and `lon` keys, and if they exist, outputs a map centered on the coordinates.
+
+```javascript
+const GeoLocationOutputHandler = {
+    shouldHandle: function(value) {
+        return (typeof value === 'object') && 'lat' in value && 'lon' in value
+    },
+
+    render: function(value, inContainer) {
+        // return a HTMLElement, as created by document.createElement
+        let img = document.createElement('img')
+        let size = inContainer ? "150x100" : "600x300"
+        img.src = 'http://staticmap.openstreetmap.de/staticmap.php?center=' + value.lat + ',' + value.lon +
+          '&zoom=17&size=' + size + '&maptype=mapnik'
+        return img
+    }
+}
+
+iodide.addOutputHandler(GeoLocationOutputHandler)
+
+```
 </script>
 <div id='page'></div>
 <script src='https://iodide-project.github.io/master/iodide.master.js'></script>
