@@ -11,7 +11,7 @@
 {
   "title": "api",
   "viewMode": "presentation",
-  "lastExport": "2018-04-26T21:41:57.898Z"
+  "lastExport": "2018-05-17T21:18:38.405Z"
 }
 
 %% css
@@ -139,7 +139,7 @@ fetch(url).then(d=>d.text())
   .then(data=>{
   // format data a bit more nicely!
   iodide.evalQueue.continue()
-  	return data.map(d=>{
+  return data.map(d=>{
       d.neighborhood = d.nbrhd
       delete d.nbrhd
       d.evictionNotices = d.count
@@ -149,7 +149,6 @@ fetch(url).then(d=>d.text())
     })
 })
 ```
-
 
 %% js
 iodide.evalQueue.requireExplicitContinuation()
@@ -184,7 +183,6 @@ fetch(url).then(d=>d.text())
 })
 
 %% md
-
 Here is another example to further clarify, using a Promise directly.
 
 ```javascript
