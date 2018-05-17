@@ -10,6 +10,7 @@
 %% meta
 {
   "title": "handling async",
+  "viewMode": "presentation",
   "lastSaved": "2018-04-19T21:29:47.264Z",
   "languages": {
     "js": {
@@ -33,7 +34,7 @@
       "pluginType": "language"
     }
   },
-  "lastExport": "2018-05-17T22:53:24.464Z"
+  "lastExport": "2018-05-17T23:09:19.528Z"
 }
 
 %% md
@@ -46,7 +47,7 @@ For users coming from a non-Javascript background, one aspect of JS that is ofte
 
 
 %% md
-So, if I evaluate two cells that contain these asynchronous calls, we might get an error. Consider the following,
+So, if I evaluate two cells that contain these asynchronous calls, we might get an error. Consider the following:
 
 %% js
 // click on this cell, then hit shift+enter twice very quickly.
@@ -60,82 +61,38 @@ undefined
 x
 
 %% md
-As you can see, the value of `x` was 10, even though under the `setTimeout` the value gets set to `100`. Try playing with the timer amount. If you set it to `0`, for instance, you'll see that the `setTimeout` still isn't being called. That's the event loop at work.
+As you can see, the value of `x` was 10, even though under the `setTimeout` the value gets set to `100`. Try playing with the timer amount.
 
 %% md
-Now, sometimes we'll be in the position to
+Now, sometimes we'll be in the position to pull data asynchronously and do something with it. If you've played with d3 in the browser, you'll notice you can't just load data like you can in Python. You have to provide a _callback_ to run after the data is pulled.
 
 %% md
 Iodide has a handful of functions that makes this all easier so you can get your work done without any hassle.
 
-Below is an example of how to prevent any further cell evaluation until we call `iodide.evalQueue.continue()`. Notice th
+Below is an example of how to prevent any further cell evaluation until we call `iodide.evalQueue.continue()`.
 
 %% js
 // click on this cell editor, then hit shift+enter twice quickly.
 // you'll notice that we have to wait for this thing to go 5 seconds (5000ms) before we evaluate the cell below.
 iodide.evalQueue.requireExplicitContinuation()
 var x = 0
-// Try returning a promise, since it'll give us a timer, and return a message.
-// We could easily just use setTimeout without a Promise, but this helps us know how long
-// this task will take.
+
 new Promise((resolve, reject)=>{
   setTimeout(()=> {
     x = 10000
     resolve('done waiting!')
     iodide.evalQueue.continue()
-
   }, 5000)
 })
 
 %% js
 x
 
-%% js
-iodide.evalQueue.requireExplicitContinuation()
-
-// You have to be careful if you use promises.
-// Catching errors is very important.
-// So build in explicit error handling if you're
-// rolling your own.
-var pr = new Promise((resolve, reject)=>{
-  setTimeout(()=> {
-    iodide.evalQueue.continue()
-    try {
-      asodifnaosidnf()
-      resolve('done waiting!')
-    } catch(e) { 
-      reject(e)
-    }
-  }, 1000)
-})
-pr
-
-%% js
-var x = 1000
-x
-
-%% js
-// here is a purer example, using only set interval.
-// before iodide.expectResolution, the cell after this one
-// would have us believe that y=0. But now that we can prevent
-// evaluation of the next cell upon iodide.resolve, 
-// notice the new value of y.
-
-iodide.evalQueue.requireExplicitContinuation()
-
-var y = 0
-
-setTimeout(()=>{
-  iodide.evalQueue.continue()
-  y = 10000
-},3000)
-
-%% js
-// This should be 10000, not 0.
-y
+%% md
+Because all the code in this notebook is runnable, being able to delay the evaluation of the next cell makes it possible to run the entire notebook, wait for an asynchronous function to finish, then resume cell evaluation.
 
 %% md
-And this cell evaluation delay is exactly how our language plugin works.
+And this cell evaluation delay is exactly how our language plugin works. There's a bunch of async stuff that happens under the hood, and we delay any other cell evaluation until the plugin has loaded everything.
 
 %% plugin
 {
@@ -155,7 +112,7 @@ import sys
 sys.version
 
 %% md
-Great. So far so good. I would reload this notebook now and try "run all cells". Everything will run, some things will take a second, but nothing should really block at this point.
+Great. So far so good. I would reload this notebook (ctrl+r or cmd+r) now and try "run all cells" (the double triangle that looks like a fast-forward sign on the top left). Everything will run, some things will take a second, but the cell evaluations will be delayed in the instances of `iodide.evalQueue.requireExplicitContinuation` and `iodide.evalQueue.continue()`.
 </script>
 <div id='page'></div>
 <script src='https://iodide-project.github.io/master/iodide.master.js'></script>
