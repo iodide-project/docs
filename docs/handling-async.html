@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>handling async - iodide</title>
+<link rel="stylesheet" type="text/css" href="https://iodide-project.github.io/master/iodide.master.css">
+</head>
+<body>
+<script id="jsmd" type="text/jsmd">
+%% meta
+{
+  "title": "handling async",
+  "lastSaved": "2018-04-19T21:29:47.264Z",
+  "languages": {
+    "js": {
+      "pluginType": "language",
+      "languageId": "js",
+      "displayName": "Javascript",
+      "codeMirrorMode": "javascript",
+      "module": "window",
+      "evaluator": "eval",
+      "keybinding": "j",
+      "url": ""
+    },
+    "py": {
+      "languageId": "py",
+      "displayName": "python",
+      "codeMirrorMode": "python",
+      "keybinding": "p",
+      "url": "https://iodide-project.github.io/pyodide-demo/pyodide.js",
+      "module": "pyodide",
+      "evaluator": "runPython",
+      "pluginType": "language"
+    }
+  },
+  "lastExport": "2018-05-17T22:53:24.464Z"
+}
+
+%% md
+# Working with Javascript's async workflow
+
+For users coming from a non-Javascript background, one aspect of JS that is often a source of confusion is working around asynchronous requests. 
+
+- [The Javascript Event Loop](https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop) 
+
+
+
+%% md
+So, if I evaluate two cells that contain these asynchronous calls, we might get an error. Consider the following,
+
+%% js
+// click on this cell, then hit shift+enter twice very quickly.
+var x = 10
+setTimeout(()=>{
+  x = 10000
+}, 1000)
+undefined
+
+%% js
+x
+
+%% md
+As you can see, the value of `x` was 10, even though under the `setTimeout` the value gets set to `100`. Try playing with the timer amount. If you set it to `0`, for instance, you'll see that the `setTimeout` still isn't being called. That's the event loop at work.
+
+%% md
+Now, sometimes we'll be in the position to
+
+%% md
+Iodide has a handful of functions that makes this all easier so you can get your work done without any hassle.
+
+Below is an example of how to prevent any further cell evaluation until we call `iodide.evalQueue.continue()`. Notice th
+
+%% js
+// click on this cell editor, then hit shift+enter twice quickly.
+// you'll notice that we have to wait for this thing to go 5 seconds (5000ms) before we evaluate the cell below.
+iodide.evalQueue.requireExplicitContinuation()
+var x = 0
+// Try returning a promise, since it'll give us a timer, and return a message.
+// We could easily just use setTimeout without a Promise, but this helps us know how long
+// this task will take.
+new Promise((resolve, reject)=>{
+  setTimeout(()=> {
+    x = 10000
+    resolve('done waiting!')
+    iodide.evalQueue.continue()
+
+  }, 5000)
+})
+
+%% js
+x
+
+%% js
+iodide.evalQueue.requireExplicitContinuation()
+
+// You have to be careful if you use promises.
+// Catching errors is very important.
+// So build in explicit error handling if you're
+// rolling your own.
+var pr = new Promise((resolve, reject)=>{
+  setTimeout(()=> {
+    iodide.evalQueue.continue()
+    try {
+      asodifnaosidnf()
+      resolve('done waiting!')
+    } catch(e) { 
+      reject(e)
+    }
+  }, 1000)
+})
+pr
+
+%% js
+var x = 1000
+x
+
+%% js
+// here is a purer example, using only set interval.
+// before iodide.expectResolution, the cell after this one
+// would have us believe that y=0. But now that we can prevent
+// evaluation of the next cell upon iodide.resolve, 
+// notice the new value of y.
+
+iodide.evalQueue.requireExplicitContinuation()
+
+var y = 0
+
+setTimeout(()=>{
+  iodide.evalQueue.continue()
+  y = 10000
+},3000)
+
+%% js
+// This should be 10000, not 0.
+y
+
+%% md
+And this cell evaluation delay is exactly how our language plugin works.
+
+%% plugin
+{
+  "languageId": "py",
+  "displayName": "python",
+  "codeMirrorMode": "python",
+  "keybinding": "p",
+  "url": "https://iodide-project.github.io/pyodide-demo/pyodide.js",
+  "module": "pyodide",
+  "evaluator": "runPython",
+  "pluginType": "language"
+}
+
+%% code {"language":"py"}
+# python
+import sys
+sys.version
+
+%% md
+Great. So far so good. I would reload this notebook now and try "run all cells". Everything will run, some things will take a second, but nothing should really block at this point.
+</script>
+<div id='page'></div>
+<script src='https://iodide-project.github.io/master/iodide.master.js'></script>
+</body>
+</html>
