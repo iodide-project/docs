@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Importing Notebooks Vial URLs - iodide</title>
+<link rel="stylesheet" type="text/css" href="https://iodide-project.github.io/master/iodide.master.css">
+</head>
+<body>
+<script id="jsmd" type="text/jsmd">
+%% meta
+{
+  "title": "Importing Notebooks Via URLs",
+  "lastExport": "2018-06-04T21:45:21.804Z",
+  "viewMode": "presentation",
+  "lastSaved": "2018-06-04T21:45:50.250Z",
+  "lastExport": "2018-06-04T21:45:56.641Z"
+}
+
+%% css
+.user-markdown h1 {
+  font-weight:900;
+}
+
+.user-markdown h1 a {
+  color:black;
+}
+
+.user-markdown h1 span {
+  font-weight: 300;
+  color: gray;
+}
+
+.user-markdown h3 {
+  padding-top:50px !important;
+}
+
+.user-markdown h4 {
+  padding-top:30px !important;
+}
+
+%% md
+# IODIDE<span> › WORKING WITH NOTEBOOKS</span>
+
+
+[< back](index.html)
+
+Here, we describe a number of different methods for working with other notebooks. We have these URL tricks for easily sharing notebooks saved in various ways - on
+servers somewhere, through Github, etc.
+
+## what is jsmd?
+
+the `jsmd` script type format is how your Iodide notebook is saved. We modelled it after [`.Rmd`](https://rmarkdown.rstudio.com/r_notebooks.html) files, RMarkdown's notebook format.
+In our case, we separate chunks of code and markdown using a delimiter: `%% md` for Markdown, `%% js` for Javascript, `%% css` for CSS, and so on. Take a look at the source of this page
+to see an example of `jsmd`.
+
+So, why aren't we just exporting big json files like Jupyter? Well, keeping a flat file format gives a great deal more flexibility, and it makes it much easier to diff between
+notebooks to see what might have changed in a document. You can't get that with big json files. And because the point of Iodide is to give you a living, breathing notebook evaluation environment,
+this means we have a lot less state to export. Markdown chunks get rendered when a page loads, libraries get requested from cdns, data gets pulled, and so on. So you don't need to save
+the kinds of state you do in a Jupyter notebook.
+
+So, to recap, an Iodide notebook is:
+
+- an html file (take a look at the source of this page)
+- that fetches the Iodide environment
+- that contains a `jsmd` blob, which has all the cell contents of your analysis
+- which is then parsed by Iodide and evaluated.
+
+## How to share an Iodide notebook
+
+Because Iodide notebooks contain everything you need to replicate the data analysis, it might be confusing to figure out how to share your results. If you have a web server somewhere,
+you can upload your notebook directly to some directory that serves html, and voila! Your live notebook should be accessible over a URL. Pretty neat, huh?
+
+In other cases, however, you might not have a web server somewhere. So we have some other ways of sharing notebooks. All of the following url tricks
+require some static iodide notebook being hosted somewhere. 
+Luckily we always keep the most recent build of Iodide here in `master`: [http://iodide-project.github.io/master/](http://iodide-project.github.io/master/)
+You're free to use that URL for all these examples.
+
+`?url=<url-to-notebook>` - imports a jsmd-formatted html file directly into your notebook. If a notebook is being served elsewhere, this will parse out the jsmd and put it into Iodide.
+
+`?gist=<gh-username>/<gist-id>` - imports the jsmd-formatted html file saved in a Github gist. We've found this is the fastest way of sharing a publicly-available notebook.
+
+  Example: [`?gist=hamilton/38ee952d60878c45dfcc741b498e555e`](http://iodide-project.github.io/master/?gist=hamilton/38ee952d60878c45dfcc741b498e555e)
+
+`?ipynb=<url-to-ipynb-file>` - imports a Jupyter notebook as jsmd and adds some boilerplate Python language imports. This effectively
+makes a large percentage of Jupyter notebooks directly runnable in Iodide using our Empscripten-compiled Python + NumPy + Matplotlib stack without any other servers other than
+our CDNs.
+
+  Example: [`?ipynb=<some-ipynb-file>`](http://iodide-project.github.io/master/?ipynb=https://raw.githubusercontent.com/mdboom/strata-mpl-tutorial/master/Introduction%20to%20matplotlib.ipynb)
+
+</script>
+<div id='page'></div>
+<script src='https://iodide-project.github.io/master/iodide.master.js'></script>
+</body>
+</html>
