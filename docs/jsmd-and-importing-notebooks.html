@@ -58,13 +58,12 @@ notebooks to see what might have changed in a document. You can't get that with 
 this means we have a lot less state to export. Markdown chunks get rendered when a page loads, libraries get requested from cdns, data gets pulled, and so on. So you don't need to save
 the kinds of state you do in a Jupyter notebook.
 
-We wrap the `jsmd` string in an HTML document. By doing this, we make it easy to upload your notebook elsewhere, serve it from a web server somewhere, and otherwise give you a lot of 
-flexibility about how you share your work. So an Iodide notebook is:
+Iodide notebook is:
 
 - an html file (take a look at the source of this page for an example!)
-- that contains a `jsmd` blob, which has all the cell contents of your analysis
-- which is then parsed by the Iodide environment and evaluated
-- using the tools that are referenced by the html file.
+- that contains a `jsmd` string wrapped in a `script` tag, which has all the cell contents of your analysis
+- whose contents are parsed by the Iodide environment and evaluated
+- using the tools referenced in the html file.
 
 ## How to share an Iodide notebook
 
