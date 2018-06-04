@@ -39,51 +39,66 @@
 }
 
 %% md
-# IODIDE<span> › WORKING WITH NOTEBOOKS</span>
+# IODIDE<span> › THE STRUCTURE OF A NOTEBOOK</span>
 
 
 [< back](index.html)
 
+## what is an Iodide notebook, under the hood?
+
+An Iodide notebook is just an html file. Simple as that! Well, not quite. We wanted our notebooks to just be plain html because this makes them runnable in any browser environment.
+This constraint motivated our file format - html wrapping `jsmd`, parsed, evaluated, and rendered by Iodide.
+
+## ok, so what _exactly_ is `iodide.js` then?
+
+From a code perspective, Iodide is a React / Redux app, fetched as a resource within an Iodide notebook (which is an html file). 
+This app parses, evaluates, and renders code, CSS, and Markdown, and fetches whatever resources necessary for the analysis.
+The _contents_ of your Iodide noteobok, however, sit in a `jsmd` string.
+
 ## what is jsmd?
 
-While working in an Iodide notebook, you're handling cells in a way similar to a Jupyter notebook. But under the hood, when you save your notebook, we use a format called `jsmd`. So just 
+While working in an Iodide notebook, you're creating and editing code in cells, similar to a Jupyter notebook. But under the hood, when you save your notebook, we use a format called `jsmd`. So just 
 what is this format?
 
-the `jsmd` script type is a flat plaintext format. We modeled it after [`.Rmd`](https://rmarkdown.rstudio.com/r_notebooks.html) files, RMarkdown's notebook format.
+the `jsmd` script type is a flat plain-text format inspired by [`.Rmd`](https://rmarkdown.rstudio.com/r_notebooks.html) (RMarkdown notebook) files.
 In our case, we separate chunks of code and markdown using a delimiter: `%% md` for Markdown, `%% js` for Javascript, `%% css` for CSS, and so on. Take a look at the source of this page
 to see an example of `jsmd`.
 
-So, why aren't we just exporting big json files like Jupyter? Well, keeping a flat file format gives a great deal more flexibility, and it makes it much easier to diff between
-notebooks to see what might have changed in a document. You can't get that with big json files. And because the point of Iodide is to give you a living, breathing notebook evaluation environment,
-this means we have a lot less state to export. Markdown chunks get rendered when a page loads, libraries get requested from cdns, data gets pulled, and so on. So you don't need to save
+So, why aren't we just exporting big json files like Jupyter and calling it a day? 
+Using a flat file format gives a great deal more flexibility, and it makes it much easier to diff 
+notebooks to see what might have changed in a document. 
+You can't get that with big json files. 
+And because the point of Iodide is to give you a living, breathing notebook evaluation environment,
+this means we have a lot less state to export. 
+Markdown chunks get rendered when a page loads, libraries get requested from cdns, data gets pulled, and so on. So you don't need to save
 the kinds of state you do in a Jupyter notebook.
 
-Iodide notebook is:
+Now we have all the pieces that comprise our single-file Iodide notebook, which is:
 
-- an html file (take a look at the source of this page for an example!)
-- that contains a `jsmd` string wrapped in a `script` tag, which has all the cell contents of your analysis
-- whose contents are parsed by the Iodide environment and evaluated
-- using the tools referenced in the html file.
+- an html file (take a look at the source of this page for an example)
+- that contains a `jsmd` string wrapped in a `script` tag containing the contents of your analysis
+- which gets parsed, evaluated, and rendered 
+- using the Iodide React / Redux app referenced in the html file.
 
 ## How to share an Iodide notebook
 
-Because Iodide notebooks contain everything you need to replicate the data analysis, it might be confusing to figure out how to share your results. If you have a web server somewhere,
+Because Iodide notebooks contain everything you need to replicate both the presentation and the data analysis, 
+it might be confusing to figure out how to share your results. If you have a web server somewhere,
 you can upload your notebook directly to some directory that serves html, and voila! Your live notebook should be accessible over a URL. Pretty neat, huh?
 
 In other cases, however, you might not have a web server somewhere. So we have some other ways of sharing notebooks. All of the following url tricks
 require some static iodide notebook being hosted somewhere. 
-Luckily we always keep the most recent build of Iodide here in `master`: [http://iodide-project.github.io/master/](http://iodide-project.github.io/master/)
-You're free to use that URL for all these examples.
+Luckily we always keep the most recent build of an new Iodide notebook here in `master`: [http://iodide-project.github.io/master/](http://iodide-project.github.io/master/)
 
 `?url=<url-to-notebook>` - imports a jsmd-formatted html file directly into your notebook. If a notebook is being served elsewhere, this will parse out the jsmd and put it into Iodide.
 
-`?gist=<gh-username>/<gist-id>` - imports the jsmd-formatted html file saved in a Github gist. We've found this is the fastest way of sharing a publicly-available notebook.
+`?gist=<gh-username>/<gist-id>` - imports the jsmd-formatted html file saved as a Github gist. We've found this is the fastest way of sharing a publicly-available notebook.
 
   Example: [`?gist=hamilton/38ee952d60878c45dfcc741b498e555e`](http://iodide-project.github.io/master/?gist=hamilton/38ee952d60878c45dfcc741b498e555e)
 
-`?ipynb=<url-to-ipynb-file>` - imports a Jupyter notebook as jsmd and adds some boilerplate Python language imports. This effectively
+`?ipynb=<url-to-ipynb-file>` - imports a Jupyter notebook as jsmd and adds some boilerplate Python language plugin cells. This effectively
 makes a large percentage of Jupyter notebooks directly runnable in Iodide using our Empscripten-compiled Python + NumPy + Matplotlib stack without any other servers other than
-our CDNs.
+our CDNs. Of course, it doesn't import the data used in the Jupyter notebook - there's no reference to the data in most notebooks. but this should get you 80% of the way there.
 
   Example: [`?ipynb=<some-ipynb-file>`](http://iodide-project.github.io/master/?ipynb=https://raw.githubusercontent.com/mdboom/strata-mpl-tutorial/master/Introduction%20to%20matplotlib.ipynb)
 
