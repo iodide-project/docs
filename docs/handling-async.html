@@ -36,28 +36,6 @@
   "lastExport": "2018-05-23T05:32:58.341Z"
 }
 
-%% css
-.user-markdown h1 {
-  font-weight:900;
-}
-
-.user-markdown h1 a {
-  color:black;
-}
-
-.user-markdown h1 span {
-  font-weight: 300;
-  color: gray;
-}
-
-.user-markdown h3 {
-  padding-top:50px !important;
-}
-
-.user-markdown h4 {
-  padding-top:30px !important;
-}
-
 %% md
 # IODIDE<span> › WORKING WITH ASYNC</span>
 
@@ -138,6 +116,29 @@ sys.version
 
 %% md
 Great. So far so good. I would reload this notebook (ctrl+r or cmd+r) now and try "run all cells" (the double triangle that looks like a fast-forward sign on the top left). Everything will run, some things will take a second, but the cell evaluations will be delayed in the instances of `iodide.evalQueue.requireExplicitContinuation()` and `iodide.evalQueue.continue()`.
+
+
+%% css
+.user-markdown h1 {
+  font-weight:900;
+}
+
+.user-markdown h1 a {
+  color:black;
+}
+
+.user-markdown h1 span {
+  font-weight: 300;
+  color: gray;
+}
+
+.user-markdown h3 {
+  padding-top:50px !important;
+}
+
+.user-markdown h4 {
+  padding-top:30px !important;
+}
 </script>
 <div id='page'></div>
 <script src='https://iodide-project.github.io/master/iodide.master.js'></script>
