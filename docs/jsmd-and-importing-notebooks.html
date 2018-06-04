@@ -2,14 +2,14 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Importing Notebooks Vial URLs - iodide</title>
+<title>JSMD and Importing Notebooks - iodide</title>
 <link rel="stylesheet" type="text/css" href="https://iodide-project.github.io/master/iodide.master.css">
 </head>
 <body>
 <script id="jsmd" type="text/jsmd">
 %% meta
 {
-  "title": "Importing Notebooks Via URLs",
+  "title": "JSMD and Importing Notebooks",
   "lastExport": "2018-06-04T21:45:21.804Z",
   "viewMode": "presentation",
   "lastSaved": "2018-06-04T21:45:50.250Z",
@@ -44,12 +44,12 @@
 
 [< back](index.html)
 
-Here, we describe a number of different methods for working with other notebooks. We have these URL tricks for easily sharing notebooks saved in various ways - on
-servers somewhere, through Github, etc.
-
 ## what is jsmd?
 
-the `jsmd` script type format is how your Iodide notebook is saved. We modelled it after [`.Rmd`](https://rmarkdown.rstudio.com/r_notebooks.html) files, RMarkdown's notebook format.
+While working in an Iodide notebook, you're handling cells in a way similar to a Jupyter notebook. But under the hood, when you save your notebook, you're saving `jsmd`. So just 
+what is this format?
+
+the `jsmd` script type is a flat plaintext format. We modeled it after [`.Rmd`](https://rmarkdown.rstudio.com/r_notebooks.html) files, RMarkdown's notebook format.
 In our case, we separate chunks of code and markdown using a delimiter: `%% md` for Markdown, `%% js` for Javascript, `%% css` for CSS, and so on. Take a look at the source of this page
 to see an example of `jsmd`.
 
