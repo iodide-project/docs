@@ -46,7 +46,7 @@
 
 ## what is jsmd?
 
-While working in an Iodide notebook, you're handling cells in a way similar to a Jupyter notebook. But under the hood, when you save your notebook, you're saving `jsmd`. So just 
+While working in an Iodide notebook, you're handling cells in a way similar to a Jupyter notebook. But under the hood, when you save your notebook, we use a format called `jsmd`. So just 
 what is this format?
 
 the `jsmd` script type is a flat plaintext format. We modeled it after [`.Rmd`](https://rmarkdown.rstudio.com/r_notebooks.html) files, RMarkdown's notebook format.
@@ -58,7 +58,8 @@ notebooks to see what might have changed in a document. You can't get that with 
 this means we have a lot less state to export. Markdown chunks get rendered when a page loads, libraries get requested from cdns, data gets pulled, and so on. So you don't need to save
 the kinds of state you do in a Jupyter notebook.
 
-So, to recap, an Iodide notebook is:
+We wrap the `jsmd` string in an HTML document. By doing this, we make it easy to upload your notebook elsewhere, serve it from a web server somewhere, and otherwise give you a lot of 
+flexibility about how you share your work. So an Iodide notebook is:
 
 - an html file (take a look at the source of this page)
 - that fetches the Iodide environment
