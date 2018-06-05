@@ -42,6 +42,51 @@
   padding-top:30px !important;
 }
 
+.user-markdown .examples {
+  display: grid;
+  padding-top:10px;
+  padding-bottom:10px;
+  margin:auto;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-column-gap: 10px;
+  height: 100%;
+}
+
+.user-markdown .examples a {
+  color: black;
+  border: 1px solid rgba(0,0,0,.05);
+  border-radius:3px;
+  background:linear-gradient(65deg, rgb(250,250,250), rgb(245,245,245) );
+  transition: 100ms;
+}
+
+.user-markdown .examples a:hover {
+  text-decoration: none;
+  border: 1px solid rgba(0,0,0,.1);
+  box-shadow: 1px 1px 18px rgba(0,0,0,.15);
+  background:linear-gradient(20deg, rgb(250,250,250), rgb(245,245,245) );
+
+}
+
+.user-markdown .examples div {
+  padding:15px;
+  font-size:13px;
+  line-height:1.3em;
+}
+
+.user-markdown .examples div img {
+  display: block;
+  outline: 1px solid lightgray;
+  margin-bottom:15px;
+}
+
+.user-markdown .examples h3 {
+  margin:0px !important;
+  padding-top: 0px !important;
+  padding-bottom:10px;
+  min-height:50px;
+}
+
 %% md
 
 
@@ -71,20 +116,38 @@ All of our documentation was written with iodide - click on the edit button on t
 
 [How to write your own output handler](https://iodide-project.github.io/iodide-examples/output-handling.html)
 
-### Examples
-
-[Lorenz Attractor](https://iodide-project.github.io/iodide-examples/lorenz-attractor-pres.html) - A concise example demonstrating how powerful 
-a web tech-focused notebook environment is for computational presentations. by [__bcolloran__](#)
-
-[Pyodide - The Scientific Python Stack in the Browser](https://iodide-project.github.io/iodide-examples/python.html) - a tutorial demonstrating how
-to use Python, Numpy, Pandas, and Matplotlib entirely within your browser. By [__mdboom__](#)
-
-[World Happiness Report](https://iodide-project.github.io/iodide-examples/world-happiness-report-2018.html) - a neat data exploration using the World Happiness Report.
-By [__djbarnwal__](#)
-
 ### Iodide API
 
 [iodide api](api.html)
+
+### Examples
+
+<div class='examples'>
+  <a href='https://iodide-project.github.io/iodide-examples/lorenz-attractor-pres.html'>
+    <div>
+      <img width=250 height=250 src='https://media.giphy.com/media/ftdkB78fuQ1Eb3J2o1/giphy.gif' />
+      <h3>Lorenz Attractor</h3>
+       A concise example demonstrating how powerful 
+      a web tech-focused notebook environment is for computational presentations.
+    </div>
+  </a> 
+
+  <a href='https://iodide-project.github.io/iodide-examples/python.html'>
+    <div>
+      <img width=250  height=250 src='https://media.giphy.com/media/65NKOOH1IQrsLx5aZb/giphy.gif' />
+        <h3>Pyodide - The Scientific Python Stack in the Browser</h3>
+           a tutorial demonstrating how
+        to use Python, Numpy, Pandas, and Matplotlib entirely within your browser.
+    </div>
+  </a>
+  <a href='https://iodide-project.github.io/iodide-examples/world-happiness-report-2018.html'>
+    <div>
+      <img width=250  height=250 src='https://media.giphy.com/media/i4rRuA3cksj8a9R58g/giphy.gif' />
+        <h3>World Happiness Report</h3>
+           a neat data exploration using the World Happiness Report.
+    </div>
+  </a>
+</div>
 
 ### Contributing
 
