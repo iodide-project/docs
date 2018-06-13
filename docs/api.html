@@ -123,9 +123,28 @@ iodide.environment.list()
 %% md
 ### `iodide.evalQueue`
 
-Functions for pausing and resuming the cell evaluation queue. Useful for awaiting the end of an asynchronous call or process of some sort before continuing onto the next cell.
+Functions for pausing and resuming the cell evaluation queue. 
+Useful for awaiting the end of an asynchronous call or process of some sort before continuing onto the next cell.
 
 %% md
+
+#### `iodide.evalQueue.await(arrayOfPromises)`
+
+Works similarly to `Promise.all`. Once all the Promises contained in `arrayOfPromises` resolve (or reject), iodide is allowed to evaluate other cells.
+
+This is the easiest way to fetch a number of data sources, delaying other cells from being evaluated until you have
+the data you need.
+
+```javascript
+var data1
+var data2
+
+iodide.evalQueue.await([
+  fetch('whatever.com/data1.json').then(d=>d.json()).then(d => data1=d),
+  fetch('whatever.com/someComplicatedData2.json').then(d => d.json()).then(d => data2=d),
+])
+```
+
 #### `iodide.evalQueue.requireExplicitContinuation()`
 
 This function explicitly sets a flag to delay any further cell evaluation until the user has encountered `iodide.evalQueue.continue()`.
