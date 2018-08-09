@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>JSMD and Importing Notebooks - iodide</title>
-<link rel="stylesheet" type="text/css" href="https://iodide.io/master/iodide.master.css">
+<link rel="stylesheet" type="text/css" href="https://iodide.io/stable/iodide.stable.css">
 </head>
 <body>
 <script id="jsmd" type="text/jsmd">
@@ -88,23 +88,23 @@ it might be confusing to figure out how to share your results. If you have a web
 you can upload your notebook directly to some directory that serves html, and voila! Your live notebook should be accessible over a URL. Pretty neat, huh?
 
 In other cases, however, you might not have a web server somewhere. So we have some other ways of sharing notebooks. All of the following url tricks
-require some static iodide notebook being hosted somewhere. 
-Luckily we always keep the most recent build of an new Iodide notebook here in `master`: [http://iodide-project.github.io/master/](http://iodide-project.github.io/master/)
+require some static iodide notebook being hosted somewhere.
+Luckily we always keep the most recent build of an new Iodide notebook here in `stable`: [http://iodide.io/stable/](http://iodide.io/stable/)
 
 `?url=<url-to-notebook>` - imports a jsmd-formatted html file directly into your notebook. If a notebook is being served elsewhere, this will parse out the jsmd and put it into Iodide.
 
 `?gist=<gh-username>/<gist-id>` - imports the jsmd-formatted html file saved as a Github gist. We've found this is the fastest way of sharing a publicly-available notebook.
 
-  Example: [`?gist=hamilton/38ee952d60878c45dfcc741b498e555e`](http://iodide-project.github.io/master/?gist=hamilton/38ee952d60878c45dfcc741b498e555e)
+  Example: [`?gist=hamilton/38ee952d60878c45dfcc741b498e555e`](http://iodide.io/stable/?gist=hamilton/38ee952d60878c45dfcc741b498e555e)
 
 `?ipynb=<url-to-ipynb-file>` - imports a Jupyter notebook as jsmd and adds some boilerplate Python language plugin cells. This effectively
 makes a large percentage of Jupyter notebooks directly runnable in Iodide using our Empscripten-compiled Python + NumPy + Matplotlib stack without any other servers other than
 our CDNs. Of course, it doesn't import the data used in the Jupyter notebook - there's no reference to the data in most notebooks. but this should get you 80% of the way there.
 
-  Example: [`?ipynb=<some-ipynb-file>`](http://iodide-project.github.io/master/?ipynb=https://raw.githubusercontent.com/mdboom/strata-mpl-tutorial/master/Introduction%20to%20matplotlib.ipynb)
+  Example: [`?ipynb=<some-ipynb-file>`](http://iodide.io/stable/?ipynb=https://raw.githubusercontent.com/mdboom/strata-mpl-tutorial/stable/Introduction%20to%20matplotlib.ipynb)
 
 </script>
 <div id='page'></div>
-<script src='https://iodide.io/master/iodide.master.js'></script>
+<script src='https://iodide.io/stable/iodide.stable.js'></script>
 </body>
 </html>

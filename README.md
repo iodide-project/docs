@@ -5,6 +5,6 @@
 
 Documentation for the Iodide notebook environment.
 
-[https://iodide-project.github.io/docs/](https://iodide-project.github.io/docs/)
+[https://iodide.io/docs/](https://iodide.io/docs/)
 
 PRs and issues welcome!

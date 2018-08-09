@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>api - iodide</title>
-<link rel="stylesheet" type="text/css" href="https://iodide.io/master/iodide.master.css">
+<link rel="stylesheet" type="text/css" href="https://iodide.io/stable/iodide.stable.css">
 </head>
 <body>
 <script id="jsmd" type="text/jsmd">
@@ -245,7 +245,7 @@ let dataSet = new Promise((resolve, reject) => {
 %% md
 ### `iodide.addOutputHandler(handler)`
 
-Adds a custom output handler to Iodide. Check out [this example notebook](https://iodide-project.github.io/iodide-examples/output-handling.html).
+Adds a custom output handler to Iodide. Check out [this example notebook](https://iodide.io/iodide-examples/output-handling.html).
 
 An output handler is an object or function that has two functions: `shouldHandle` and `render`. `shouldHandle` is a function that takes a value, inspects it in some way, and then returns `true` if this handler should handle it, and `false` otherwise. `iodide.addOutputHandler` takes the handler and adds it to the chain of handlers checked whenever a user outputs a return value in a cell.
 
@@ -274,6 +274,6 @@ iodide.addOutputHandler(GeoLocationOutputHandler)
 %% js
 </script>
 <div id='page'></div>
-<script src='https://iodide.io/master/iodide.master.js'></script>
+<script src='https://iodide.io/stable/iodide.stable.js'></script>
 </body>
 </html>
