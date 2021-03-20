@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://docs.iodide.io/workflows/" rel="canonical"/>
+<link href="../img/favicon.ico" rel="shortcut icon"/>
+<title>Common workflows and tips - Iodide Documentation</title>
+<link href="../css/bootstrap.min.css" rel="stylesheet"/>
+<link href="../css/font-awesome.min.css" rel="stylesheet"/>
+<link href="../css/base.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<link href="../extra.css" rel="stylesheet"/>
+<script defer="" src="../js/jquery-1.10.2.min.js"></script>
+<script defer="" src="../js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body>
+<div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+<div class="container">
+<a class="navbar-brand" href="..">Iodide Documentation</a>
+<!-- Expander button -->
+<button class="navbar-toggler" data-target="#navbar-collapse" data-toggle="collapse" type="button">
+<span class="navbar-toggler-icon"></span>
+</button>
+<!-- Expanded navigation -->
+<div class="navbar-collapse collapse" id="navbar-collapse">
+<ul class="nav navbar-nav ml-auto">
+<li class="nav-item">
+<a class="nav-link" href="https://github.com/iodide-project/iodide/edit/master/docs/workflows.md"><i class="fa fa-github"></i> Edit on GitHub</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="container">
+<div class="row">
+<div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+<div class="navbar-header">
+<button class="navbar-toggler collapsed" data-target="#toc-collapse" data-toggle="collapse" title="Table of Contents" type="button">
+<span class="fa fa-angle-down"></span>
+</button>
+</div>
+<div class="navbar-collapse collapse card bg-secondary" id="toc-collapse">
+<ul class="nav flex-column">
+<li class="nav-item" data-level="1"><a class="nav-link" href="#common-workflows-and-tips">Common workflows and tips</a>
+<ul class="nav flex-column">
+<li class="nav-item" data-level="2"><a class="nav-link" href="#running-async-code">Running Async code</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#getting-data-into-an-iodide-notebook">Getting data into an Iodide notebook</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#manipulating-the-dom-for-eg-adding-plots">Manipulating the DOM (for e.g adding plots)</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div></div>
+<div class="col-md-9" role="main">
+<h1 id="common-workflows-and-tips">Common workflows and tips</h1>
+<p><em>Please also read our page about a few <a href="../quirks/">JavaScript quirks</a> that you might encounter while using JavaScript in Iodide.</em></p>
+<h2 id="running-async-code">Running Async code</h2>
+<p>When you are running code in an Iodide notebook, if you run a code chunk that returns a Promise Iodide will pause further evaluation until the Promise resolves. <a href="https://alpha.iodide.io/notebooks/3249/">This demo notebook</a> gives a simple example of the concept. and <a href="https://alpha.iodide.io/notebooks/2327/">this notebook</a> shows how the idea can be used with an <a href="https://developer.mozilla.org/en-US/docs/Glossary/IIFE">immediately invoked function expression</a> to fetch data programmatically.</p>
+<p>This feature of Iodide may be used to simplify async workflows, particularly when you wish to share a notebook report, which will automatically run code in the notebook.</p>
+<h2 id="getting-data-into-an-iodide-notebook">Getting data into an Iodide notebook</h2>
+<p>Iodide can use JavaScript and standard browser APIs to download data from public URLs on the web. As a convenience, we also provide a “fetch chunk” in IOMD, which allows you to load data using a shorthand syntax. You can read more about IOMD fetch chunk syntax in the fetch chunk section of the <a href="../iomd/">IOMD docs</a>.</p>
+<h3 id="from-a-remote-server">From a remote server</h3>
+<p>It's possible to download data from a remote server using a browser APIs or a fetch cell. Examples are given in the fetch chunk section of the <a href="../iomd/">IOMD docs</a>.</p>
+<h4 id="cors-problems">CORS problems</h4>
+<p>One of the most common problems people encounter when attempting to load data into Iodide from a remote server are issues with <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS">CORS settings</a>, which can restrict the ability of Iodide to download data from some other websites. Unfortunately, for security reasons browsers make it <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Functional_overview">impossible to surface CORS errors in a web app</a>, so Iodide cannot give you the guidance you need directly, but if you have trouble loading a data file from a third party server, this is very likely to be the reason why. To check, you can open your browser's developer tools (press <code>ctrl+shift+i</code>); in case of a CORS issue, you will see a message like:</p>
+<pre><code>Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at {URI of resource you tried to load}.
+(Reason: CORS request did not succeed).
+</code></pre>
+<p>To work around CORS errors, you need to upload your data to a server that does not impose restrictions on resource sharing. We recommend using either the Iodide server for storing data (see below), or using a <a href="https://gist.github.com/">GitHub Gist</a>, which will allow you to upload files that can be downloaded within Iodide. After uploading your data into a gist, you can access the data by copying the URL for the "raw" version of your gist, which can be accessed at <code>https://gist.githubusercontent.com/{your user name}/{your gist id}/raw</code></p>
+<h3 id="uploading-data-to-an-iodide-notebook">Uploading data to an Iodide notebook</h3>
+<p><em>Note: during our alpha period, files larger than 10MB cannot be uploaded.</em></p>
+<p>If you want to work with data stored on your local machine or if you are
+encountering CORS problems while attempting to use a dataset from a remote
+server, you may upload data directly to Iodide.</p>
+<h3 id="uploading-files-directly">uploading files directly</h3>
+<p>Data is uploaded on a per-notebook basis—rather than uploading data to
+your user account, you upload it to a specific notebook. There are two ways to
+do this.</p>
+<p>To create a new notebook with certain files attached, drop the files anywhere on
+the Iodide homepage.</p>
+<p>To add files to an existing notebook, open the notebook and click on the
+hamburger menu icon near the top-left of the page, then click <em>Manage Files</em>.
+The file management modal will appear. By default, you will be in the <em>Manage
+Files</em> tab. Click <em>Add Files</em> and select any number of files to upload. Once the
+files finished uploading, they will appear in a list alongside other files
+associated with that notebook. Click <em>Delete</em> at any time to delete a file.</p>
+<p>To access this file from your notebook, you would use a fetch cell with the
+syntax --</p>
+<pre><code>%% fetch
+TYPE: VAR_NAME = FILE_NAME
+</code></pre>
+<p>-- where <code>TYPE</code> is the type of the file ("text", "json", "arraybuffer", or
+"blob"), <code>VARNAME</code> is the variable into which you want to load the data, and
+<code>FILE_NAME</code> is the name of the file you uploaded.</p>
+<p>This notebook <a href="https://alpha.iodide.io/notebooks/127/">shows how to load and use an image
+blob</a>.</p>
+<h3 id="scheduling-file-uploads">scheduling file uploads</h3>
+<p>Additionally, from the file management modal you can also add <em>file sources</em>,
+which allow you schedule file downloads from URLS on the Iodide server. To do
+so, click on the <em>manage file sources</em> tab in the file management modal tab bar.
+Enter a URL as an input, a filename as an output, and an automatic update
+interval (with the options: "never", where the file source must be manually
+updated; "daily", where the file source is updated once a day; and "weekly"
+where the file source is updated once a week). The file sources API will
+download the file at the specified URL and save the file to the Iodide server
+according to the update interval. The resulting file will be available to the
+notebook just like any other file.</p>
+<p>Readers will not be able to see what file sources the author has added, but can
+utilize the saved file outputs in the notebook as files. There are a few
+intended use cases for file sources:</p>
+<ol>
+<li>sometimes a notebook author may want to utilize a dataset from a URL that may
+   have sensitive information in the URL, such as an API key. Using a file
+   source will allow the author to fetch and save the data without exposing that
+   information.</li>
+<li>sometimes an author may want to cache data from a URL that is not available
+   due to CORS restrictions, but wants the dataset to be refreshed periodically
+   without having to manually add the data themselves.</li>
+</ol>
+<h2 id="manipulating-the-dom-for-eg-adding-plots">Manipulating the DOM (for e.g adding plots)</h2>
+<p>Some plotting libraries (like d3, or Plotly) require a DOM element to be available before you can plot. The easiest way to do this is to add a <code>&lt;div&gt;</code> into a Markdown cell and then select the element using browser APIs or functions from your preferred library:</p>
+<pre><code class="language-plain">%% md
+&lt;div id=’plot-target’&gt;&lt;/div&gt;
+
+%% js
+elt1 = document.getElementById("plot-target") // browser API, one option...
+elt2 = document.querySelector("#plot-target") // browser API, another option
+$("#plot-target") ... // jQuery
+d3.select("#plot-target") ... // d3
+</code></pre>
+<p>You can always manipulate the DOM in Markdown cells as if your notebook were a static web page. Anything defined in a Markdown cell is fair game for DOM manipulation using the browser's <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document">document API methods</a>.</p></div>
+</div>
+</div>
+<footer class="col-md-12">
+<hr/>
+<p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+</footer>
+<script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+<script defer="" src="../js/base.js"></script>
+<script defer="" src="https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js"></script>
+<div aria-hidden="true" aria-labelledby="keyboardModalLabel" class="modal" id="mkdocs_keyboard_modal" role="dialog" tabindex="-1">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+<button class="close" data-dismiss="modal" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+</div>
+<div class="modal-body">
+<table class="table">
+<thead>
+<tr>
+<th style="width: 20%;">Keys</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="help shortcut"><kbd>?</kbd></td>
+<td>Open this help</td>
+</tr>
+<tr>
+<td class="next shortcut"><kbd>n</kbd></td>
+<td>Next page</td>
+</tr>
+<tr>
+<td class="prev shortcut"><kbd>p</kbd></td>
+<td>Previous page</td>
+</tr>
+<tr>
+<td class="search shortcut"><kbd>s</kbd></td>
+<td>Search</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="modal-footer">
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

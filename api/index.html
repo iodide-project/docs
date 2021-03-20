@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://docs.iodide.io/api/" rel="canonical"/>
+<link href="../img/favicon.ico" rel="shortcut icon"/>
+<title>API docs - Iodide Documentation</title>
+<link href="../css/bootstrap.min.css" rel="stylesheet"/>
+<link href="../css/font-awesome.min.css" rel="stylesheet"/>
+<link href="../css/base.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<link href="../extra.css" rel="stylesheet"/>
+<script defer="" src="../js/jquery-1.10.2.min.js"></script>
+<script defer="" src="../js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body>
+<div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+<div class="container">
+<a class="navbar-brand" href="..">Iodide Documentation</a>
+<!-- Expander button -->
+<button class="navbar-toggler" data-target="#navbar-collapse" data-toggle="collapse" type="button">
+<span class="navbar-toggler-icon"></span>
+</button>
+<!-- Expanded navigation -->
+<div class="navbar-collapse collapse" id="navbar-collapse">
+<ul class="nav navbar-nav ml-auto">
+<li class="nav-item">
+<a class="nav-link" href="https://github.com/iodide-project/iodide/edit/master/docs/api.md"><i class="fa fa-github"></i> Edit on GitHub</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="container">
+<div class="row">
+<div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+<div class="navbar-header">
+<button class="navbar-toggler collapsed" data-target="#toc-collapse" data-toggle="collapse" title="Table of Contents" type="button">
+<span class="fa fa-angle-down"></span>
+</button>
+</div>
+<div class="navbar-collapse collapse card bg-secondary" id="toc-collapse">
+<ul class="nav flex-column">
+<li class="nav-item" data-level="1"><a class="nav-link" href="#api-docs">API docs</a>
+<ul class="nav flex-column">
+<li class="nav-item" data-level="2"><a class="nav-link" href="#iodidefile">iodide.file</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#iodideaddoutputrendererrendererspecification">iodide.addOutputRenderer(rendererSpecification)</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#iodideclearoutputrenderers">iodide.clearOutputRenderers()</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#iodideoutput">iodide.output</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div></div>
+<div class="col-md-9" role="main">
+<h1 id="api-docs">API docs</h1>
+<p>These functions, available within any code cell, aim to improve workflows and
+challenges presented by JavaScript and web browsers.</p>
+<p>Please direct clarifications or observations of inaccuracy to <a href="https://github.com/iodide-project/iodide/issues/new">our issue
+tracker</a>.</p>
+<h2 id="iodidefile"><code>iodide.file</code></h2>
+<p>The <code>iodide.file</code> API provides convenience functions for working with files
+uploaded to the Iodide server in your notebook.</p>
+<h3 id="iodidefilesavefilename-serializertype-data-saveoptions"><code>iodide.file.save(fileName, serializerType, data[, saveOptions])</code></h3>
+<p>Returns a
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises">Promise</a>,
+which, when resolved, will signal that <code>data</code> was uploaded to the server under the filename
+<code>fileName</code>. If the file already exists or <code>data</code> is not serializable, the Promise will reject.
+Because you must own the notebook in order to save files to it, if you do not own a
+notebook and run <code>iodide.file.save</code> Iodide will throw an error. As such, we suggest including
+the <a href="https://iodide-project.github.io/docs/iomd/#skiprunall"><code>skipRunAll</code> tag</a> in the JS chunk
+evaluating <code>iodide.file.save</code> so that a user viewing your report does not encounter an error. Take
+a look at the example in the <code>iodide.file.save</code> examples section.</p>
+<p><code>fileName</code> (required) is a string that represents the file name.</p>
+<p><code>serializerType</code> (required) is a string consisting of one of four options: <code>text</code> (applies <code>.toString()</code> to <code>data</code>), <code>json</code> (applies <code>JSON.stringify(data)</code>), <code>arrayBuffer</code> (saves as a binary array buffer), and <code>blob</code> (saves as a <code>Blob</code> object). These match the <code>fetchType</code> in <code>iodide.file.load</code> – if you save with a certain <code>serializerType</code>, it is recommended to load it with the same <code>fetchType</code>.</p>
+<p><code>data</code> (required) is any object or variable in the eval name space. It will be serialized depending on the <code>serializerType</code>.</p>
+<p>The optional argument <code>saveOptions</code> has the following keys:</p>
+<ul>
+<li><code>overwrite</code> (optional, default <code>false</code>): if <code>true</code>, will overwrite whatever is
+  at <code>fileName</code> with <code>data</code>. If <code>false</code>, and the file exists, the Promise will reject.</li>
+</ul>
+<h4 id="iodidefilesave-examples"><code>iodide.file.save</code> examples</h4>
+<pre><code class="language-javascript">
+// upload a data set as a csv to the server.
+// For now, we'll use d3.csvFormat (from https://github.com/d3/d3-dsv) to serialize
+// the array of objects.
+// This overwrites whatever is in `cached-data.csv` because overwrite is set to true.
+
+%% fetch
+
+// first, let's import d3-dsv, which has the d3.csvFormat function.
+
+js: https://cdnjs.cloudflare.com/ajax/libs/d3-dsv/1.0.8/d3-dsv.js
+
+%% js
+
+const data = [{x1: 10, x2: 'random string'}, {x1: 20, x2: 'another string'}];
+
+iodide.file.save('cached-data.csv', 'text', d3.csvFormat(data), { overwrite: true });
+
+%% js
+
+// this will get csv data from the previous example back into your iodide notebook.
+
+iodide.file.load('cached-data.csv', 'text').then((raw) =&gt; {
+  const data = d3.csvParse(raw);
+  doSomethingWithTheData(data);
+});
+
+%% js
+
+// iodide.file.save works with ArrayBuffers as well.
+// In this case, we've computed data into a space-efficient
+// Int16Array, and want to save it.
+
+async function saveAndLoad() {
+  // imagine 1 million entries here.
+  await iodide.file.save(
+    'model-output.bin',
+    'arrayBuffer',
+    Int16Array.from([10,342,3,1, ...]));
+  // Let's load it back into the notebook.
+  const buffer = await iodide.file.load('model-output.bin', 'arrayBuffer');
+  // Here, we've reconstructed the array.
+  console.log(new Int16Array(buffer));
+}
+
+saveAndLoad()
+</code></pre>
+<p>Because <code>iodide.file.save</code> is only available to a notebook owner, if you are running another user's
+notebook, you will encounter an error message. To prevent this for other users, a common pattern is
+to use <code>iodide.file.save</code> to cache some computation for others, then mark the chunk that contains
+<code>iodide.file.save</code> as <code>skipRunAll</code>. Here is an example:</p>
+<pre><code class="language-javascript">
+%% js skipRunAll
+
+// if I own this notebook and manually run this chunk, it will save the computed data.
+// If I do not own this notebook and manually run this chunk, it will throw an error.
+// If I do not own this notebook but open this notebook as a report (?viewMode=report)
+// this chunk will be skipped.
+
+fetch('https://...').then((r) =&gt; r.json())
+  .then((data) =&gt; calculateAllCorrelations(data)) // this is expensive.
+  .then((correlations) =&gt; {
+    iodide.file.save('correlations.data', 'json', correlations, {overwrite: true});
+  });
+
+%% js
+
+// this chunk will be the one that loads the cached correlations when the notebook
+// is opened as a report (that is, all code chunks are evaluated).
+
+iodide.file.load('correlations.data', 'json', 'correlations');
+
+%% js
+
+// the variable 'correlations' is now available in the namespace.
+
+console.log(correlations);
+</code></pre>
+<p>The following example shows how to use the <code>blob</code> serializer type to save an image from a cat image API, then display it.</p>
+<pre><code class="language-javascript">%% md
+
+&lt;div&gt;&lt;img id='cat'/&gt;&lt;/div&gt;
+
+%% js
+
+const url = 'https://cataas.com/cat/says/hello%20world!';
+
+async function catchTheCatThenDisplay() {
+  const cat = await fetch(url).then(r =&gt; r.blob());
+  // let's save the cat.
+  await iodide.file.save('my-next-cat', 'blob', cat, {overwrite: true});
+  // now, let's load the cached cat we just saved.
+  // we could just use cat from above, but we won't.
+  const cachedCat = await iodide.file.load('my-next-cat', 'blob');
+  var urlCreator = window.URL || window.webkitURL;
+  var imageUrl = urlCreator.createObjectURL(cat);
+  document.querySelector("#cat").src = imageUrl;
+}
+
+catchTheCatThenDisplay();
+</code></pre>
+<h3 id="iodidefileloadfilename-filetype-variablename"><code>iodide.file.load(fileName, fileType[, variableName])</code></h3>
+<p>Returns a
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises">Promise</a>
+that, when resolved, loads into the notebook the save file <code>fileName</code>.
+If the file does not exist or if you pass in invalid arguments, the Promise will reject. You can
+find a list of uploaded files on your notebook's revisions page (available at
+<code>https://iodide.io/notebooks/&lt;notebook-id&gt;/revisions</code>). You can also access any
+uploaded file through the fetch chunk, <a href="https://iodide-project.github.io/docs/workflows/#uploading-data-to-an-iodide-notebook">following this
+pattern</a>.
+For most use cases using <a href="https://iodide-project.github.io/docs/iomd/#fetch-chunks-fetch">fetch
+chunks</a> is
+preferable and more straightforward. In more dynamic cases,
+however, <code>iodide.file.load</code> can provide more nuanced workflows.</p>
+<p><code>fileName</code> is the name of the file uploaded to the Iodide server.</p>
+<p><code>fileType</code> is the file type to handle. These are the same as the following data fetch types
+available to <a href="https://iodide-project.github.io/docs/iomd/#fetch-chunks-fetch">fetch chunks</a>:</p>
+<ul>
+<li><code>json</code> (load this file as json and parse into a javascript object),</li>
+<li><code>text</code> (load this file as text),</li>
+<li><code>arrayBuffer</code> (load this file into an Array Buffer, especially useful when working with typed arrays)</li>
+<li><code>blob</code> (load this file as a <a href="https://developer.mozilla.org/en-US/docs/Web/API/Blob">Blob</a>) and</li>
+<li><code>bytes</code> (load this file into an Array Buffer then convert it to <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array">Uint8Array</a>, especially useful when working with APIs that expect a typed array of bytes)</li>
+</ul>
+<p>These match the <code>serializerType</code> in <code>iodide.file.save</code> – if you save with a certain <code>serializerType</code>, it is recommended to load it with the same <code>fetchType</code>.</p>
+<p><code>variableName</code> (required for <code>json</code>, <code>text</code>, and <code>blob</code> file types, otherwise
+not applicable): the variable name in which to load the data, available in the
+browser <code>window</code> namespace.</p>
+<h4 id="iodidefileload-examples"><code>iodide.file.load</code> examples</h4>
+<pre><code class="language-javascript">
+%% js
+
+// load a csv
+
+iodide.file.load('cached-data.csv', 'text').then((rawCSV) =&gt; {
+  const processedData = d3.csvParse(rawCSV);
+  // use a plotting library of some sort here:
+  plotGraph(processedData, ...);
+});
+
+%% js
+
+iodide.file.load('gritty.mp4', 'blob', 'gritty').then(() =&gt; {
+  // load this gritty video into a &lt;video /&gt; tag in the md chunk below this one.
+  var urlCreator = window.URL || window.webkitURL;
+  var imageUrl = urlCreator.createObjectURL(gritty);
+  document.querySelector("#gritty").src = imageUrl;
+});
+
+%% md
+
+&lt;video id='gritty'&gt;&lt;/video&gt;
+
+
+%% js
+
+// let's load a json file, then access it in the next chunk.
+
+iodide.file.load('query-results.json', 'json', 'queryResults');
+
+%% js
+
+// the json file should now be available in the object queryResults.
+
+var entries = queryResults.rows.map(...);
+</code></pre>
+<h3 id="iodidefiledeletefilename"><code>iodide.file.delete(fileName)</code></h3>
+<p>Deletes the file specified by <code>fileName</code>. Returns a
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises">Promise</a>
+that when resolved, denotes that the file was deleted on the server. If the file does not exist,
+the Promise will reject.</p>
+<h3 id="iodidefiledelete-examples"><code>iodide.file.delete</code> examples</h3>
+<pre><code class="language-javascript">
+%% js
+
+// delete all locally cached pngs
+
+function clearLocalPNGCache() {
+  iodide.file.list()
+    .filter(filename =&gt; !filename.includes('.png'))
+    .forEach(iodide.file.delete);
+};
+
+%% js
+
+// if the file does not exist, we can catch the error and do something instead.
+
+iodide.file.delete('old-dataset.txt')
+  .catch(err =&gt; {
+  return `well, that didn't work: ${err.message}`
+});
+</code></pre>
+<h3 id="iodidefilelist"><code>iodide.file.list()</code></h3>
+<p>Returns an Array of file names available to the current notebook.</p>
+<h4 id="iodidefilelist-examples"><code>iodide.file.list</code> examples</h4>
+<pre><code class="language-javascript">
+%% js
+
+// load each data set and plot it
+
+const plotRequests = iodide.file.list()
+  .filter(f =&gt; f.filename.includes('.csv'))
+  .map(f =&gt; iodide.file.load(f, 'text').then((raw) =&gt; {
+    const data = d3.csvParse(raw);
+    genericPlotFunction(data);
+  }));
+
+Promise.all(plotRequests);
+</code></pre>
+<h3 id="iodidefileexistsfilename"><code>iodide.file.exists(fileName)</code></h3>
+<p>Returns <code>true</code> if the file <code>fileName</code> is available to the notebook, and <code>false</code>
+otherwise.</p>
+<h4 id="iodidefileexists-examples"><code>iodide.file.exists</code> examples</h4>
+<p>The example below loads cached data if it exists on the server, and otherwise
+downloads the larger dataset remotely, processes it, then caches it.</p>
+<pre><code class="language-javascript">
+%% js
+
+const FILENAME = 'dataset.csv';
+if (iodide.file.exists(FILENAME)) {
+  // since the cached file already exists, let's load it.
+  iodide.file.load(FILENAME, 'text', 'evictionsData')
+    .then(() =&gt; {
+      evictionsData = d3.parseCsv(evictionsData);
+    });
+} else {
+  // if we don't have the cached file, let's go ahead
+  // and download the bigger one, manipulate it with some
+  // function processDataAndReduceItsSize, then save it to the server
+  // so the next time we run this code chunk, we'll just load the
+  // cached (smaller) version.
+  fetch('http://...')
+    .then((r) =&gt; r.json())
+    .then(processDataAndReduceItsSize)
+    .then((finalData) =&gt; {
+      evictionsData = finalData;
+      return iodide.file.save(evictionsData, 'dataset.csv', d3.csvFormat);
+    })
+}
+</code></pre>
+<h3 id="iodidefilelastupdatedfilename"><code>iodide.file.lastUpdated(fileName)</code></h3>
+<p>Returns a <code>Date</code> object that represents when the file associated with <code>fileName</code>
+was last updated.</p>
+<h4 id="iodidefilelastupdated-examples"><code>iodide.file.lastUpdated</code> examples</h4>
+<pre><code class="language-javascript">// get the oldest csv file
+
+const oldestDate = Math.min(
+  ...iodide.file
+    .list()
+    .filter(f =&gt; f.includes(".csv"))
+    .map(iodide.file.lastUpdated)
+);
+</code></pre>
+<h2 id="iodideaddoutputrendererrendererspecification"><code>iodide.addOutputRenderer(rendererSpecification)</code></h2>
+<p>Adds a custom output renderer to Iodide.</p>
+<p>An output renderer specification is an object that has two functions:
+<code>shouldRender</code> and <code>render</code>.</p>
+<ul>
+<li><code>shouldRender</code> is a function that takes a value,
+  inspects it in some way, and then returns <code>true</code> if this renderer should handle
+  the value, and <code>false</code> otherwise.</li>
+<li><code>render</code> takes a value and returns an HTML string. The string is sanitized and may include only the tags <code>div</code>, <code>span</code>, <code>ol</code>, <code>ul</code>, <code>li</code>, <code>table</code>, <code>thead</code>, <code>tbody</code>, <code>th</code>, <code>tr</code>, <code>td</code>, and <code>pre</code>. Additionally, only the atributes <code>style</code> and <code>class</code> are allowed in these elements.</li>
+<li>Note that for convenience, we have included the standard set of <code>[rendered_html](https://github.com/jupyter/notebook/blob/master/notebook/static/notebook/less/renderedhtml.less)</code> styles from <a href="https://jupyter.org/">Jupyter</a>, so language plugin authors may re-use HTML output from Jupyter kernels (subject to the constraints above), and end up with similar looking results. Please contact us if you encounter difficulties with this.</li>
+</ul>
+<p>Calling <code>iodide.addOutputRenderer</code> takes the renderer spec and adds
+it to the <em>end</em> of the chain of user-defined renderers that checked whenever a user outputs a return value in a cell.</p>
+<p>By way of example, this renderer will inspect a value for <code>lat</code> and <code>lon</code> keys,
+and if they exist, outputs a map centered on the coordinates.</p>
+<pre><code class="language-javascript">const GeoLocationOutputRenderer = {
+  shouldRender: (value) =&gt; (
+    return typeof value === "object" &amp;&amp; "lat" in value &amp;&amp; "lon" in value;
+  ),
+  render: (value) =&gt; (
+    `&lt;img src="http://staticmap.openstreetmap.de/staticmap.php?center=${value.lat},${value.lon}&amp;zoom=17&amp;size=300x200&amp;maptype=mapnik"/&gt;`
+  ),
+};
+
+iodide.addOutputRenderer(GeoLocationOutputRenderer);
+</code></pre>
+<h2 id="iodideclearoutputrenderers"><code>iodide.clearOutputRenderers()</code></h2>
+<p>Clears all user-defined output renderers that have been added to the Iodide session
+using <code>iodide.addOutputRenderer(rendererSpecification)</code></p>
+<h2 id="iodideoutput"><code>iodide.output</code></h2>
+<p>The <code>iodide.output</code> API provides convenience functions for programmatically adding DOM elements to your report without having to explicitly include them in a Markdown chunk.</p>
+<p>The DOM elements created using these functions are inserted into your report in the order in which they appear in your IOMD code. Importantly, the code chunk that created the element provides a key that allows Iodide to track the location of the element. Because of this, if you evaluate a code chunk that produces a DOM element using these functions, changing that code chunk will cause the element to be removed from your report and you will have to evaluate the code chunk again to refresh the element. (This is ensures that obsolete DOM elements are never left behind when you make code changes.)</p>
+<p>These convenience functions are only intended to be used for synchronous rendering. If you use them within an asynchronous callback, the DOM elements may be placed in unexpected positions within your report. To ensure that you have full control over the placement of DOM elements that you wish to target within asynchronous operations, it is recommended that you explicitly place a DOM element within a Markdown chunk, and that you target that element with code in a script.</p>
+<p>Note also that because of the way the browser event loop works, if you create or mutate multiple DOM elements within a synchronous loop, all of those changes will be applied to the DOM at once. This means that it it's not possible, for example, to track the progress of a long-running synchronous computation loop by updating a DOM node from the main thread. For situations like this, you may need to use a more advanced technique like a <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers">Web Worker</a>.</p>
+<h3 id="iodideoutputelementnodetype"><code>iodide.output.element(nodeType)</code></h3>
+<p>This function creates a DOM element of <code>nodeType</code> in your report and returns a reference to the element. This DOM element can then be manipulated using any function that operates on DOM elements or any DOM API provided by the browser.</p>
+<h3 id="iodideoutputtextstring"><code>iodide.output.text(string)</code></h3>
+<p>This function takes the given <code>string</code>, splits it at each new line, and for each resulting line of text adds a new <code>div</code> containing that line to your report.</p></div>
+</div>
+</div>
+<footer class="col-md-12">
+<hr/>
+<p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+</footer>
+<script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+<script defer="" src="../js/base.js"></script>
+<script defer="" src="https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js"></script>
+<div aria-hidden="true" aria-labelledby="keyboardModalLabel" class="modal" id="mkdocs_keyboard_modal" role="dialog" tabindex="-1">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+<button class="close" data-dismiss="modal" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+</div>
+<div class="modal-body">
+<table class="table">
+<thead>
+<tr>
+<th style="width: 20%;">Keys</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="help shortcut"><kbd>?</kbd></td>
+<td>Open this help</td>
+</tr>
+<tr>
+<td class="next shortcut"><kbd>n</kbd></td>
+<td>Next page</td>
+</tr>
+<tr>
+<td class="prev shortcut"><kbd>p</kbd></td>
+<td>Previous page</td>
+</tr>
+<tr>
+<td class="search shortcut"><kbd>s</kbd></td>
+<td>Search</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="modal-footer">
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

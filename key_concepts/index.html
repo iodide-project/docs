@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://docs.iodide.io/key_concepts/" rel="canonical"/>
+<link href="../img/favicon.ico" rel="shortcut icon"/>
+<title>Key concepts and getting started - Iodide Documentation</title>
+<link href="../css/bootstrap.min.css" rel="stylesheet"/>
+<link href="../css/font-awesome.min.css" rel="stylesheet"/>
+<link href="../css/base.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<link href="../extra.css" rel="stylesheet"/>
+<script defer="" src="../js/jquery-1.10.2.min.js"></script>
+<script defer="" src="../js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body>
+<div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+<div class="container">
+<a class="navbar-brand" href="..">Iodide Documentation</a>
+<!-- Expander button -->
+<button class="navbar-toggler" data-target="#navbar-collapse" data-toggle="collapse" type="button">
+<span class="navbar-toggler-icon"></span>
+</button>
+<!-- Expanded navigation -->
+<div class="navbar-collapse collapse" id="navbar-collapse">
+<ul class="nav navbar-nav ml-auto">
+<li class="nav-item">
+<a class="nav-link" href="https://github.com/iodide-project/iodide/edit/master/docs/key_concepts.md"><i class="fa fa-github"></i> Edit on GitHub</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="container">
+<div class="row">
+<div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+<div class="navbar-header">
+<button class="navbar-toggler collapsed" data-target="#toc-collapse" data-toggle="collapse" title="Table of Contents" type="button">
+<span class="fa fa-angle-down"></span>
+</button>
+</div>
+<div class="navbar-collapse collapse card bg-secondary" id="toc-collapse">
+<ul class="nav flex-column">
+<li class="nav-item" data-level="1"><a class="nav-link" href="#key-concepts-and-getting-started">Key concepts and getting started</a>
+<ul class="nav flex-column">
+<li class="nav-item" data-level="2"><a class="nav-link" href="#anatomy-of-an-iodide-notebook">Anatomy of an Iodide notebook</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#writing-and-experimenting-in-your-notebook">Writing and experimenting in your notebook</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#the-iodide-server">The Iodide Server</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#sharing-your-notebook">Sharing your notebook</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div></div>
+<div class="col-md-9" role="main">
+<h1 id="key-concepts-and-getting-started">Key concepts and getting started</h1>
+<p>Iodide is tool designed to make Web-based scientific communication and computation more accessible to scientists by bringing them a low friction iterative workflow in a familiar environment influenced by tools such as Jupyter, R-Studio, and the MATLAB IDE. We believe that the Web provides an unparalleled platform for communicating scientific ideas with easily shareable interactive data visualization and accessible beautiful write up, but that modern Web development seems slow, cumbersome, and unapproachable to most scientists.</p>
+<p>Iodide stands alongside other excellent tools for exploring and prototyping JavaScript, and it may be used just for prototyping and experimenting with web programming if desired. Unlike many of the other available tools, however, Iodide is focused on allowing you to easily create and share an uncluttered "report", a presentable document that looks how <em>you</em> want it to look, and that is not mixed with code or other distracting UI elements. For those familiar with R-Markdown, the workflow will be familiar: code and written material are combined within a document as desired, but the final output is a nicely formatted presentational document. In the case of R-Markdown, that document is typically a PDF, but in Iodide that output is a fully interactive Web document, capable of running it's own live JavaScript (<em>and other languages via WebAssembly!</em>), and with full access to the browser's complete set of capabilities. And unlike a PDF generated via R-Markdown, with one click you and your collaborators can return to your code, updating and remixing it as desired!</p>
+<h2 id="anatomy-of-an-iodide-notebook">Anatomy of an Iodide notebook</h2>
+<p>When you open a new Iodide notebook, by default you'll see Iodide's <strong>explore view</strong>, which looks like this:</p>
+<p><img alt="Screen Shot 2019-03-11 at 4 58 45 PM" src="https://user-images.githubusercontent.com/95735/54166135-08936e00-4421-11e9-9817-aca915831f42.png"/></p>
+<p>Here are the key components of what you're seeing:</p>
+<ul>
+<li>At the top is Iodide's <strong>menu bar</strong>, which allows you to access the controls needed to manage your Iodide session. Importantly, in the top right of the menubar you'll find the <strong>view button</strong> which allows you to toggle back and forth between the <em>explore view</em> and the <em>report view</em>.</li>
+<li>Beneath the menu bar are a set of tabbed panes. These panes can be moved and resized, allowing you to create a customize layout depending on your workflow needs. The panes are:<ul>
+<li>The <em>editor pane</em> shown on the left side of the window by default. In this pane, you can edit your <a href="../iomd/">iomd</a> code. You can also evaluate a chunk of <a href="../iomd/">iomd</a> code by pressing <code>ctrl+enter</code> (or <code>shift+enter</code> to evaluate the current chunk and advance to the next).</li>
+<li>the <em>report preview</em>, shown on the top right, does exactly what it sounds like: it gives you a preview of what your report will look like based on the Markdown you've entered and the code you've evaluated so far. (And remember: you can see the full report by clicking the "REPORT" button in the toolbar at top)</li>
+<li>the <em>console pane</em> in the bottom right shows you the outputs from the iomd chunks you've evaluated, allows you to scroll back through your evaluation history, and allows you to enter one-off bits of code without putting them in your iomd document</li>
+<li>the <em>workspace pane</em> (not shown by default) allows you to explore the variables you have created by evaluating code during your session</li>
+</ul>
+</li>
+</ul>
+<h2 id="writing-and-experimenting-in-your-notebook">Writing and experimenting in your notebook</h2>
+<p>As mentioned above, to create a  notebook, you will edit <a href="../iomd/">IOMD</a> code in the editor pane. You can mix code, markdown and few other IOMD chunk types as needed to tell your story the way that you want.</p>
+<p>As you go, you can also evaluate a <a href="../iomd/">IOMD</a> code chunks pressing <code>ctrl+enter</code> (or <code>shift+enter</code> to evaluate the current chunk and advance to the next). These chunks of code don’t do anything until you explicitly evaluate them. Behind the scenes, Iodide is just running <code>eval</code> on your JavaScript code in an iframe with its own JavaScript evaluation scope and browser DOM separate from the editor (or, in the case of language plugins, Iodide makes a call to an interpreter compiled to WebAssembly that is contained in the iframe scope).</p>
+<h2 id="the-iodide-server">The Iodide Server</h2>
+<p>The Iodide server provides a hosted solution to make edits and save changes to your Iodide notebook on the Web. The server allows for you to create a profile to save your collection of notebooks, track changes made in a central location.</p>
+<p>When editing an iodide notebook, the content of your notebook should be saved at a regular interval (currently 30 seconds) as you type. The server has a collection of all the revisions explicitly saved to the during your session. To access the revisions for a notebook, go to the landing page and hover over a notebook of interest. You will see the option <code>revisions</code> that you can click, which will take you the history of revisions for that notebook.</p>
+<h2 id="sharing-your-notebook">Sharing your notebook</h2>
+<p>Your notebook will have a link associated with it - just look in your browser’s url bar. At any time, you can share that link with others, and they’ll be able to view, run, and fork your notebook.</p>
+<p>By default, if you share the editor link (which looks like <a href="https://extremely-alpha.iodide.io/notebooks/151/">https://alpha.iodide.io/notebooks/151/</a>), anyone who opens it will be brought to the editor. If you append <code>?viewMode=report</code> (so it looks like this - <a href="https://alpha.iodide.io/notebooks/151/?viewMode=report">https://alpha.iodide.io/notebooks/151/?viewMode=report</a>) the notebook will open as a report, which automatically runs all the code and renders the Markdown when the page loads. At any time, a reader can click the “EXPLORE” button on the top right to jump back into the editor view and dig deeper.</p>
+<p>At this time, we don’t have a way of setting viewing permissions on notebooks, but will in the future.</p></div>
+</div>
+</div>
+<footer class="col-md-12">
+<hr/>
+<p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+</footer>
+<script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+<script defer="" src="../js/base.js"></script>
+<script defer="" src="https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js"></script>
+<div aria-hidden="true" aria-labelledby="keyboardModalLabel" class="modal" id="mkdocs_keyboard_modal" role="dialog" tabindex="-1">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+<button class="close" data-dismiss="modal" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+</div>
+<div class="modal-body">
+<table class="table">
+<thead>
+<tr>
+<th style="width: 20%;">Keys</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="help shortcut"><kbd>?</kbd></td>
+<td>Open this help</td>
+</tr>
+<tr>
+<td class="next shortcut"><kbd>n</kbd></td>
+<td>Next page</td>
+</tr>
+<tr>
+<td class="prev shortcut"><kbd>p</kbd></td>
+<td>Previous page</td>
+</tr>
+<tr>
+<td class="search shortcut"><kbd>s</kbd></td>
+<td>Search</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="modal-footer">
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

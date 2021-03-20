@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://docs.iodide.io/server-admin-overview/" rel="canonical"/>
+<link href="../img/favicon.ico" rel="shortcut icon"/>
+<title>Server administration overview - Iodide Documentation</title>
+<link href="../css/bootstrap.min.css" rel="stylesheet"/>
+<link href="../css/font-awesome.min.css" rel="stylesheet"/>
+<link href="../css/base.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<link href="../extra.css" rel="stylesheet"/>
+<script defer="" src="../js/jquery-1.10.2.min.js"></script>
+<script defer="" src="../js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body>
+<div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+<div class="container">
+<a class="navbar-brand" href="..">Iodide Documentation</a>
+<!-- Expander button -->
+<button class="navbar-toggler" data-target="#navbar-collapse" data-toggle="collapse" type="button">
+<span class="navbar-toggler-icon"></span>
+</button>
+<!-- Expanded navigation -->
+<div class="navbar-collapse collapse" id="navbar-collapse">
+<ul class="nav navbar-nav ml-auto">
+<li class="nav-item">
+<a class="nav-link" href="https://github.com/iodide-project/iodide/edit/master/docs/server-admin-overview.md"><i class="fa fa-github"></i> Edit on GitHub</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="container">
+<div class="row">
+<div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+<div class="navbar-header">
+<button class="navbar-toggler collapsed" data-target="#toc-collapse" data-toggle="collapse" title="Table of Contents" type="button">
+<span class="fa fa-angle-down"></span>
+</button>
+</div>
+<div class="navbar-collapse collapse card bg-secondary" id="toc-collapse">
+<ul class="nav flex-column">
+<li class="nav-item" data-level="1"><a class="nav-link" href="#server-administration-overview">Server administration overview</a>
+<ul class="nav flex-column">
+<li class="nav-item" data-level="2"><a class="nav-link" href="#architecture">Architecture</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#deployment">Deployment</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#important-configuration-variables">Important configuration variables</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#optional-configuration-variables">Optional configuration variables</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div></div>
+<div class="col-md-9" role="main">
+<h1 id="server-administration-overview">Server administration overview</h1>
+<p>This documentation is currently somewhat incomplete, help filling it out is
+welcome.</p>
+<h2 id="architecture">Architecture</h2>
+<p>At heart, Iodide is a fairly standard CRUD (create-read-update-delete) application, built on top of <a href="https://www.djangoproject.com/">Django</a>. Here is an architecture diagram outlining the main components:</p>
+<div class="mermaid">
+graph TD
+
+User(fa:fa-user User)
+
+User --&gt; Main
+User --&gt; EvalFrame
+
+subgraph Website / Editor
+Main(fa:fa-server Main website e.g. <i>https://alpha.iodide.io</i>)
+EvalFrame(fa:fa-server Iodide eval-frame sandbox e.g. <i>https://alpha.iodide.app</i>)
+end
+
+subgraph Supporting services
+DB(fa:fa-database Database Storage - Heroku Postgres or Google CloudSQL)
+Redis(fa:fa-database Redis Cache)
+end
+
+Main --&gt; DB
+Main --&gt; Redis
+</div>
+<p>The main unconventional piece is that (when properly configured), Iodide
+will serve content from two domains: the bulk of the site and JavaScript
+is served from a "primary" domain (e.g. https://alpha.iodide.io/), but the actual evaluation context for the notebook content is served from a <em>separate</em> domain (e.g. https://alpha.iodide.app/), loaded transparently from the primary one. This is designed to provide some measure of security against a malicious notebook being used (for example) to steal a user's credentials or private information: the evaluation context (eval-frame) has no credentials or cookies associated with it, so is not able to directly access server APIs which are privileged.</p>
+<h2 id="deployment">Deployment</h2>
+<p>Iodide is currently designed to be deployable on <a href="https://heroku.com">Heroku</a> out of the box, using <a href="https://github.com">Github</a> as an authentication provider. We are also steadily working on a docker-container based version of Iodide which should be suitable for use in other environments (e.g. Google Cloud Platform) using other authentication/identity providers, but this is not yet ready for public use.</p>
+<h2 id="important-configuration-variables">Important configuration variables</h2>
+<p>For the Iodide server to operate as expected, the following environment
+variables <em>must</em> be defined:</p>
+<table>
+<thead>
+<tr>
+<th>Variable name</th>
+<th>Example</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DATABASE_URL</td>
+<td>postgres://USER:PASSWORD...</td>
+<td>Defines location of database, see <a href="https://django-environ.readthedocs.io/en/latest/#environ.environ.Env.db_url_config">django-environ</a> documentation</td>
+</tr>
+<tr>
+<td>GITHUB_CLIENT_ID</td>
+<td>bdc0d336e6bdac44...</td>
+<td>Github client id credential, provided when you register a github application</td>
+</tr>
+<tr>
+<td>GITHUB_CLIENT_SECRET</td>
+<td>9dd7e43338bc08b95ac7...</td>
+<td>Github client secret credential, provided when you register github application</td>
+</tr>
+<tr>
+<td>SECRET_KEY</td>
+<td>q+50k8-no4ukn9pc25(i*=...</td>
+<td>See <a href="https://docs.djangoproject.com/en/dev/ref/settings/#secret-key">django documentation</a></td>
+</tr>
+<tr>
+<td>SERVER_URI</td>
+<td>https://alpha.iodide.io/</td>
+<td>Root URL of site</td>
+</tr>
+</tbody>
+</table>
+<h2 id="optional-configuration-variables">Optional configuration variables</h2>
+<p>The following variables may be configured to add or change behaviour of the
+Iodide server:</p>
+<table>
+<thead>
+<tr>
+<th>Variable name</th>
+<th>Example</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GA_TRACKING_ID</td>
+<td>UA-1000005-1</td>
+<td>If defined, google analytics (with the specified tracking id) will be used for pages loaded (users may opt-out by specifying Do Not Track)</td>
+</tr>
+<tr>
+<td>EVAL_FRAME_ORIGIN</td>
+<td>https://alpha.iodide.app/</td>
+<td>If defined, refers to the domain that should be used to serve the eval frame</td>
+</tr>
+<tr>
+<td>USE_OPENIDC_AUTH</td>
+<td>1</td>
+<td>If specified and true, use OpenIDC for authentication instead of GitHub</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<footer class="col-md-12">
+<hr/>
+<p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+</footer>
+<script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+<script defer="" src="../js/base.js"></script>
+<script defer="" src="https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js"></script>
+<div aria-hidden="true" aria-labelledby="keyboardModalLabel" class="modal" id="mkdocs_keyboard_modal" role="dialog" tabindex="-1">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+<button class="close" data-dismiss="modal" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+</div>
+<div class="modal-body">
+<table class="table">
+<thead>
+<tr>
+<th style="width: 20%;">Keys</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="help shortcut"><kbd>?</kbd></td>
+<td>Open this help</td>
+</tr>
+<tr>
+<td class="next shortcut"><kbd>n</kbd></td>
+<td>Next page</td>
+</tr>
+<tr>
+<td class="prev shortcut"><kbd>p</kbd></td>
+<td>Previous page</td>
+</tr>
+<tr>
+<td class="search shortcut"><kbd>s</kbd></td>
+<td>Search</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="modal-footer">
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

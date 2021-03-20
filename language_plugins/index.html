@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://docs.iodide.io/language_plugins/" rel="canonical"/>
+<link href="../img/favicon.ico" rel="shortcut icon"/>
+<title>Language plugins - Iodide Documentation</title>
+<link href="../css/bootstrap.min.css" rel="stylesheet"/>
+<link href="../css/font-awesome.min.css" rel="stylesheet"/>
+<link href="../css/base.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<link href="../extra.css" rel="stylesheet"/>
+<script defer="" src="../js/jquery-1.10.2.min.js"></script>
+<script defer="" src="../js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body>
+<div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+<div class="container">
+<a class="navbar-brand" href="..">Iodide Documentation</a>
+<!-- Expander button -->
+<button class="navbar-toggler" data-target="#navbar-collapse" data-toggle="collapse" type="button">
+<span class="navbar-toggler-icon"></span>
+</button>
+<!-- Expanded navigation -->
+<div class="navbar-collapse collapse" id="navbar-collapse">
+<ul class="nav navbar-nav ml-auto">
+<li class="nav-item">
+<a class="nav-link" href="https://github.com/iodide-project/iodide/edit/master/docs/language_plugins.md"><i class="fa fa-github"></i> Edit on GitHub</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="container">
+<div class="row">
+<div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+<div class="navbar-header">
+<button class="navbar-toggler collapsed" data-target="#toc-collapse" data-toggle="collapse" title="Table of Contents" type="button">
+<span class="fa fa-angle-down"></span>
+</button>
+</div>
+<div class="navbar-collapse collapse card bg-secondary" id="toc-collapse">
+<ul class="nav flex-column">
+<li class="nav-item" data-level="1"><a class="nav-link" href="#language-plugins">Language plugins</a>
+<ul class="nav flex-column">
+<li class="nav-item" data-level="2"><a class="nav-link" href="#using-a-custom-language-plugin">Using a custom language plugin</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div></div>
+<div class="col-md-9" role="main">
+<h1 id="language-plugins">Language plugins</h1>
+<p>Iodide supports programming languages other than JavaScript through the use of
+language plugins.</p>
+<p>Languages that are mature and well supported automatically load when you create
+and run a IOMD chunk for that language. These are called "built-in" because
+Iodide knows about them, even if support is loaded dynamically only when needed.
+Other languages require the use of a language plugin chunk, described below.</p>
+<p>Not all language plugins have the same level of interoperability between
+JavaScript and the plugin language. We've defined the following approximate
+levels of support to make it easier to know what to expect.</p>
+<ul>
+<li>
+<p>Level 1: The plugin just provides string output, so is useful as a basic
+  console REPL (read-eval-print-loop).</p>
+</li>
+<li>
+<p>Level 2: The plugin converts basic data types (numbers, strings, arrays and
+  objects) to and from JavaScript.</p>
+</li>
+<li>
+<p>Level 3: The plugin supports sharing of class instances (objects with methods)
+  between the plugin language and JavaScript.</p>
+</li>
+<li>
+<p>Level 4: The plugin supports sharing of <em>n</em>-dimensional arrays and data frames
+  between the plugin language and JavaScript.</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Project</th>
+<th>Language</th>
+<th>Level 1</th>
+<th>Level 2</th>
+<th>Level 3</th>
+<th>Level 4</th>
+<th>Built-in</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="http://github.com/iodide-project/pyodide">Pyodide</a></td>
+<td>Python</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>partial</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><a href="https://github.com/keno/julia-wasm">Julide</a></td>
+<td>Julia</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://alpha.iodide.io/notebooks/1234">AssemblyScript</a></td>
+<td>AssemblyScript</td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://alpha.iodide.io/notebooks/1416/">Lua</a></td>
+<td>Lua</td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://alpha.iodide.io/notebooks/1453/">Opal</a></td>
+<td>Ruby</td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://github.com/louisabraham/domical">Domical</a></td>
+<td>OCaml</td>
+<td>✓</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://github.com/six42/iodide-plantuml-plugin">PlantUml</a></td>
+<td>PlantUml</td>
+<td>✓</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>(We try to keep the above table up-to-date, but things fall through the cracks.
+Let us know on <a href="http://github.com/iodide-project/iodide/">GitHub</a> if you see anything
+needs updating).</p>
+<h2 id="using-a-custom-language-plugin">Using a custom language plugin</h2>
+<p>The language plugin is specified by a IOMD chunk containing a JSON string with
+the following format:</p>
+<pre><code>%% plugin
+
+{
+  "languageId": "jsx",
+  "displayName": "React JSX",
+  "url": "https://raw.githubusercontent.com/hamilton/iodide-jsx/master/docs/evaluate-jsx.js",
+  "module": "jsx",
+  "evaluator": "evaluateJSX",
+  "pluginType": "language"
+}
+</code></pre>
+<p>The individual fields are described below:</p>
+<ul>
+<li>
+<p><code>languageId</code>: A short identifier for the language.  This is used to specify the language at the beginning of a <a href="../iomd/">IOMD</a> chunk, for example, <code>%% jsx</code>.  By convention, this should be the filename extension that is most commonly used for the language.</p>
+</li>
+<li>
+<p><code>displayName</code>: A longer name used to identify the language in menus and other UX elements.</p>
+</li>
+<li>
+<p><code>url</code>: The URL to a JavaScript source file that defines the language support.  It is evaluated directly in the scope that runs Iodide user code, therefore it should should be "modularized" such that it only adds a single object to the global namespace.</p>
+</li>
+<li>
+<p><code>module</code>: The name of the module provided by the JavaScript file given by <code>url</code>.</p>
+</li>
+<li>
+<p><code>evaluator</code>: The name of the function in the module that evaluates code for the custom language.  For example, if <code>module</code> is <code>jsx</code> and <code>evaluator</code> is <code>evaluateJSX</code>, Iodide will call <code>window.jsx.evaluateJSX()</code> to run code for the custom language.  This function must take a single string argument containing source code, and return an arbitrary JavaScript value for the result.  For the best user experience when displaying values in the UI, this object should be a JavaScript representation that mirrors as closely as possibly the representation in the plugin language.  To return a custom HTML representation of the object, return an object with a <code>iodideRender</code> method, returning a string of raw HTML.</p>
+</li>
+<li>
+<p><code>asyncEvaluator</code>: (optional) If evaluating code requires making asynchronous calls, for example, to load additional code from a remote location, an <code>asyncEvaluator</code> method should be provided.  It will take precedence over <code>evaluator</code> if provided.  It takes a string of source code, but returns a <code>Promise</code> that resolves to result value rather than returning the result immediately.  Otherwise, it follows the same conventions as <code>evaluator</code>.</p>
+</li>
+<li>
+<p><code>autocomplete</code>: (optional) The name of the function to get autocomplete candidates.  This function must accept a single argument <code>code</code>, and return a array of strings representing candidate completions. <em>Note</em>: language plugin authors are encouraged to see whether there is a Jupyter kernel that implement this functionality for their language; such code could be adapted by setting the <code>cursor_pos</code> argument expected by Jupyter to the final position in the <code>code</code> string (Iodide always passes code strings that are truncated to the cursor's position). Please see the <a href="https://jupyter-client.readthedocs.io/en/stable/messaging.html#completion">Jupyter docs</a>.</p>
+</li>
+<li>
+<p><code>pluginType</code>: Must always be <code>language</code> for language plugins.  Other values are resolved for other plugin types to be defined in the future.</p>
+</li>
+</ul>
+<p>If desired, you may also place the language plugin definition inside a json file and load it using a fetch cell as follows:</p>
+<pre><code>%% fetch
+plugin: https://example.com/plugin-definition.json
+</code></pre>
+<p>See the iomd documentation on <a href="../iomd/#iomd-chunk-types">chunk types</a> for more details.</p></div>
+</div>
+</div>
+<footer class="col-md-12">
+<hr/>
+<p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+</footer>
+<script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+<script defer="" src="../js/base.js"></script>
+<script defer="" src="https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js"></script>
+<div aria-hidden="true" aria-labelledby="keyboardModalLabel" class="modal" id="mkdocs_keyboard_modal" role="dialog" tabindex="-1">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+<button class="close" data-dismiss="modal" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+</div>
+<div class="modal-body">
+<table class="table">
+<thead>
+<tr>
+<th style="width: 20%;">Keys</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="help shortcut"><kbd>?</kbd></td>
+<td>Open this help</td>
+</tr>
+<tr>
+<td class="next shortcut"><kbd>n</kbd></td>
+<td>Next page</td>
+</tr>
+<tr>
+<td class="prev shortcut"><kbd>p</kbd></td>
+<td>Previous page</td>
+</tr>
+<tr>
+<td class="search shortcut"><kbd>s</kbd></td>
+<td>Search</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="modal-footer">
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
